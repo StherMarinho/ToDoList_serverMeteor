@@ -1,0 +1,71 @@
+:root {
+  --loading-color: #6768f2;
+  --loader-border: #6768f21a;
+  --loading-gap: 8px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  height: 100%;
+  overflow-y: hidden;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  height: 100%;
+  margin: 0;
+  user-select: none;
+}
+
+.custom-list-item::before {
+  content: "• "; /* Unicode for bullet */
+  margin-right: 5px;
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/poppins-v20-latin-regular.woff2') format('woff2'),
+  url('../fonts/poppins-v20-latin-regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 600;
+  src: url('../fonts/poppins-v20-latin-600.woff2') format('woff2'),
+  url('../fonts/poppins-v20-latin-600.ttf') format('truetype');
+}
+
+/* Ensure that the max height respects the viewport height */
+.MuiModal-root .MuiBox-root {
+  max-height: calc(100vh - (100vh - 100%));
+}
+
+.loadingText {
+  font-size: 16px;
+  color: var(--loading-color);
+  margin-top: var(--loading-gap);
+}
+
+.loader {
+  width: 100px;
+  height: 100px;
+  border: 10px solid var(--loader-border);
+  border-radius: 50%;
+  border-top: 10px solid var(--loading-color);
+  animation: loading 1s linear infinite;
+}
+
+@keyframes loading {
+  from { transform: rotate(0deg)}
+  to { transform: rotate(360deg)}
+}

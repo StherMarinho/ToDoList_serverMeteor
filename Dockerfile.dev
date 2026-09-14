@@ -1,0 +1,33 @@
+# syntax=docker/dockerfile:1.7
+
+ARG NODE_VERSION=24.15.0
+ARG METEOR_VERSION=3.5
+
+FROM node:${NODE_VERSION}-bookworm-slim
+
+ARG METEOR_VERSION
+
+ENV METEOR_ALLOW_SUPERUSER=true
+
+WORKDIR /app
+
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends ca-certificates curl git procps python3 make g++ \
+	&& rm -rf /var/lib/apt/lists/*
+
+RUN curl "https://install.meteor.com/?release=${METEOR_VERSION}" | sh
+
+COPY package.json package-lock.json ./
+COPY .meteor .meteor
+
+RUN meteor npm ci
+
+COPY . .
+COPY docker/dev-entrypoint.sh /usr/local/bin/docker-dev-entrypoint
+
+RUN chmod +x /usr/local/bin/docker-dev-entrypoint
+
+EXPOSE 3000
+
+ENTRYPOINT ["/usr/local/bin/docker-dev-entrypoint"]
+CMD ["meteor", "run", "--settings", "settings.json", "--port", "0.0.0.0:3000"]

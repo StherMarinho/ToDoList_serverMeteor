@@ -1,0 +1,70 @@
+name: meteor-react-base-prod
+
+services:
+  app:
+    image: meteor-react-base-mui:prod
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      ROOT_URL: "${ROOT_URL:-http://localhost:3000}"
+      MONGO_URL: "mongodb://mongo:27017/meteor-react-base?replicaSet=rs0"
+      MONGO_OPLOG_URL: "mongodb://mongo:27017/local?replicaSet=rs0"
+      UPLOADS_DIR: "/app/uploads/meteorUploads"
+      METEOR_SETTINGS_FILE: "/app/settings.json"
+      APP_NAME: "${APP_NAME:-}"
+      APP_SHORT_NAME: "${APP_SHORT_NAME:-}"
+      APP_SERVICE_NAME: "${APP_SERVICE_NAME:-}"
+      DEFAULT_ADMIN_USERNAME: "${DEFAULT_ADMIN_USERNAME:-}"
+      DEFAULT_ADMIN_EMAIL: "${DEFAULT_ADMIN_EMAIL:-}"
+      DEFAULT_ADMIN_PASSWORD: "${DEFAULT_ADMIN_PASSWORD:-}"
+      MAIL_URL_SMTP: "${MAIL_URL_SMTP:-}"
+      MAIL_NO_REPLY: "${MAIL_NO_REPLY:-}"
+      MAIL_SYSTEM: "${MAIL_SYSTEM:-}"
+      CORS_ORIGINS: "${CORS_ORIGINS:-}"
+      MEDIA_ACCESS_TOKEN: "${MEDIA_ACCESS_TOKEN:-}"
+      GOOGLE_CLIENT_ID: "${GOOGLE_CLIENT_ID:-}"
+      GOOGLE_CLIENT_SECRET: "${GOOGLE_CLIENT_SECRET:-}"
+      GOOGLE_VALID_CLIENT_IDS: "${GOOGLE_VALID_CLIENT_IDS:-}"
+      FACEBOOK_APP_ID: "${FACEBOOK_APP_ID:-}"
+      FACEBOOK_SECRET: "${FACEBOOK_SECRET:-}"
+    volumes:
+      - app_uploads:/app/uploads
+      - ./settings.json:/app/settings.json:ro
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/health/ready').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+  mongo:
+    image: mongo:7.0
+    restart: unless-stopped
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--oplogSize", "128"]
+    volumes:
+      - mongo_data:/data/db
+      - mongo_config:/data/configdb
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "mongosh --quiet --eval \"try { rs.status().ok } catch (e) { rs.initiate({_id: 'rs0', members: [{ _id: 0, host: 'mongo:27017' }] }).ok }\" | grep -q 1"
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 5s
+
+volumes:
+  app_uploads:
+  mongo_data:
+  mongo_config:

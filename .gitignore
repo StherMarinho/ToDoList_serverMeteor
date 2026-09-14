@@ -1,0 +1,16 @@
+.idea
+.idea/*
+.meteor/local
+node_modules
+jatai-web/
+.vscode
+.cypress/cucumber-json/
+.cypress/results/
+.cypress/screenshots/
+.cypress/videos/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+settings.json
+.DS_Store
