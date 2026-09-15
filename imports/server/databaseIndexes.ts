@@ -1,6 +1,6 @@
 import { userprofileServerApi } from '../modules/userprofile/api/userProfileServerApi';
 import { exampleServerApi } from '../modules/example/api/exampleServerApi';
-import { toDosServerApi } from '../modules/toDos/api/toDosApi';
+import { toDosServerApi } from '../modules/toDos/api/toDosServerApi';
 import { attachmentsCollection } from '../api/attachmentsCollection';
 import { Meteor } from 'meteor/meteor';
 
@@ -21,8 +21,8 @@ Meteor.startup(async () => {
 			'meta.fieldName': 1,
 			uploadedAt: 1
 		}),
-		toDos.createIndexAsync({ pessoal: 1, createdby: 1, lastupdate: -1 }),
-        toDos.createIndexAsync({ createdby: 1, lastupdate: -1 }),
-        toDos.createIndexAsync({ concluida: 1, lastupdate: -1 }),
+		toDos.createIndexAsync({ personal: 1, createdby: 1, lastupdate: -1 }),
+toDos.createIndexAsync({ createdby: 1, lastupdate: -1 }),
+toDos.createIndexAsync({ completed: 1, lastupdate: -1 }),
 	]);
 });
