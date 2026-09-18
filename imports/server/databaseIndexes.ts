@@ -22,7 +22,7 @@ Meteor.startup(async () => {
 			uploadedAt: 1
 		}),
 		toDos.createIndexAsync({ personal: 1, createdby: 1, lastupdate: -1 }),
-toDos.createIndexAsync({ createdby: 1, lastupdate: -1 }),
-toDos.createIndexAsync({ completed: 1, lastupdate: -1 }),
+		toDos.createIndexAsync({ createdby: 1, lastupdate: -1 }),
+		toDos.createIndexAsync({ completed: 1, lastupdate: -1 }),
 	]);
 });
